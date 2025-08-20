@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Marketplace Homepage</title>
+<style>
+body {
+  font-family: "Poppins", sans-serif;
+  background: #f7f6f2;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  position: relative;
+}
+#adminBtn {
+  padding: 10px 20px;
+  background: #5a67d8;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 20px;
+  transition: 0.3s;
+}
+#adminBtn:hover {
+  background: #7f9cf5;
+}
+/* Basket Icon */
+#basketIcon {
+  position: relative;
+  cursor: pointer;
+  margin-right: 10px;
+}
+#basketIcon img {
+  width: 30px;
+  height: 30px;
+}
+#basketCount {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* Title */
+h1 {
+  text-align: center;
+  margin-top: 20px;
+}
+#products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+/* Product Card */
+.product-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+.product-card:hover img {
+  transform: scale(1.05);
+}
+.product-card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  transition: transform 0.5s;
+  cursor: pointer;
+}
+/* Product info at bottom */
+.product-info {
+  padding: 10px 15px;
+  background: #ffffff;
+  border-top: 1px solid #ddd;
+}
+.product-info h3 {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+}
+.product-info p {
+  margin: 2px 0;
+  font-size: 14px;
+}
+.price {
+  color: #ff6600;
+  font-weight: bold;
+  font-size: 16px;
+}
+.add-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #5a67d8;
+  color: white;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.add-btn:hover {
+  background: #7f9cf5;
+}
+/* Responsive grid */
+@media (min-width: 900px) {
+  #products { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  #products { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Basket Modal */
+#basketModal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right:0;
+  max-height: 50%;
+  background: #fff;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+  z-index: 1000;
+  padding: 15px;
+}
+#basketModal.show { transform: translateY(0); }
+.basket-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+.basket-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-right:10px; }
+.basket-item-info { flex:1; }
+.remove-btn {
+  background: red;
+  color:white;
+  border:none;
+  border-radius:5px;
+  padding: 4px 8px;
+  cursor: pointer;
+  margin-left:10px;
+}
+
+/* Inquire Button in basket */
+#inquireBtn {
+  padding:10px 15px;
+  background:#25D366;
+  color:white;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  font-weight:bold;
+  width:100%;
+  margin-top:10px;
+  font-size:16px;
+}
+
+/* Image Modal */
+#imgModal {
+  position: fixed;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index:2000;
+  display:none;
+}
+#imgModal img { max-width:80%; max-height:80%; border-radius:10px; }
+#imgModal .close {
+  position: absolute;
+  top:20px;
+  right:20px;
+  color:white;
+  font-size:30px;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div id="basketIcon">
+    <img src="https://img.icons8.com/ios-filled/50/000000/shopping-basket.png"/>
+    <div id="basketCount">0</div>
+  </div>
+  <button id="adminBtn">Admin</button>
+</header>
+
+<h1>Our Collection</h1>
+
+<div id="products">
+  <!-- Product 1 -->
+  <div class="product-card" data-images='["https://picsum.photos/id/1011/400/300","https://picsum.photos/id/1012/400/300"]' data-name="Classic Shirt" data-material="Cotton" data-size="M" data-price="2500">
+    <img src="https://picsum.photos/id/1011/400/300" alt="Classic Shirt">
+    <div class="product-info">
+      <h3>Classic Shirt</h3>
+      <p>Material: Cotton</p>
+      <p>Size: M</p>
+      <p class="price">KES 2500</p>
+      <div class="add-btn">Add to Basket</div>
+    </div>
+  </div>
+
+  <!-- Product 2 -->
+  <div class="product-card" data-images='["https://picsum.photos/id/1021/400/300","https://picsum.photos/id/1022/400/300"]' data-name="Elegant Dress" data-material="Silk" data-size="L" data-price="4500">
+    <img src="https://picsum.photos/id/1021/400/300" alt="Elegant Dress">
+    <div class="product-info">
+      <h3>Elegant Dress</h3>
+      <p>Material: Silk</p>
+      <p>Size: L</p>
+      <p class="price">KES 4500</p>
+      <div class="add-btn">Add to Basket</div>
+    </div>
+  </div>
+
+  <!-- Product 3 -->
+  <div class="product-card" data-images='["https://picsum.photos/id/1031/400/300","https://picsum.photos/id/1032/400/300"]' data-name="Stylish Jacket" data-material="Leather" data-size="L" data-price="6500">
+    <img src="https://picsum.photos/id/1031/400/300" alt="Stylish Jacket">
+    <div class="product-info">
+      <h3>Stylish Jacket</h3>
+      <p>Material: Leather</p>
+      <p>Size: L</p>
+      <p class="price">KES 6500</p>
+      <div class="add-btn">Add to Basket</div>
+    </div>
+  </div>
+</div>
+
+<!-- Basket Modal -->
+<div id="basketModal">
+  <h3>Your Basket</h3>
+  <div id="basketItems"></div>
+  <p><strong>Total: KES <span id="basketTotal">0</span></strong></p>
+  <button id="inquireBtn">Inquire via WhatsApp</button>
+</div>
+
+<!-- Image Modal -->
+<div id="imgModal">
+  <span class="close">&times;</span>
+  <img src="" alt="Product Image">
+</div>
+
+<script>
+// Slideshow for product cards
+const productCards = document.querySelectorAll('.product-card');
+productCards.forEach(card => {
+  const imgEl = card.querySelector('img');
+  const images = JSON.parse(card.getAttribute('data-images'));
+  let index = 0;
+  setInterval(() => {
+    index = (index + 1) % images.length;
+    imgEl.src = images[index];
+  }, 2000);
+  
+  // Click to open modal slideshow
+  imgEl.addEventListener('click', () => {
+    openImageModal(images);
+  });
+});
+
+// Basket functionality
+let basket = [];
+const basketIcon = document.getElementById('basketIcon');
+const basketCount = document.getElementById('basketCount');
+const basketModal = document.getElementById('basketModal');
+const basketItems = document.getElementById('basketItems');
+const basketTotal = document.getElementById('basketTotal');
+
+document.querySelectorAll('.add-btn').forEach((btn,index)=>{
+  btn.addEventListener('click', ()=>{
+    const card = productCards[index];
+    const product = {
+      name: card.dataset.name,
+      material: card.dataset.material,
+      size: card.dataset.size,
+      price: parseInt(card.dataset.price),
+      img: JSON.parse(card.dataset.images)[0]
+    };
+    basket.push(product);
+    updateBasket();
+  });
+});
+
+function updateBasket(){
+  basketCount.textContent = basket.length;
+  basketItems.innerHTML = '';
+  let total = 0;
+  basket.forEach((item,i)=>{
+    total += item.price;
+    basketItems.innerHTML += `<div class="basket-item">
+      <img src="${item.img}" alt="${item.name}">
+      <div class="basket-item-info">
+        <strong>${item.name}</strong><br>
+        Material: ${item.material}, Size: ${item.size}<br>
+        KES ${item.price}
+      </div>
+      <button class="remove-btn" onclick="removeFromBasket(${i})">X</button>
+    </div>`;
+  });
+  basketTotal.textContent = total;
+}
+
+function removeFromBasket(index){
+  basket.splice(index,1);
+  updateBasket();
+}
+
+// Toggle basket modal
+basketIcon.addEventListener('click', ()=>{
+  basketModal.classList.toggle('show');
+});
+
+// Admin button
+document.getElementById('adminBtn').addEventListener('click', ()=>{
+  alert("Admin login page will open here later.");
+});
+
+// Image modal
+const imgModal = document.getElementById('imgModal');
+const modalImg = imgModal.querySelector('img');
+const closeImg = imgModal.querySelector('.close');
+function openImageModal(images){
+  let idx = 0;
+  modalImg.src = images[idx];
+  imgModal.style.display = 'flex';
+  const interval = setInterval(()=>{
+    idx = (idx + 1) % images.length;
+    modalImg.src = images[idx];
+  },2000);
+  
+  closeImg.onclick = ()=>{
+    clearInterval(interval);
+    imgModal.style.display = 'none';
+  }
+}
+
+// WhatsApp inquire
+document.getElementById('inquireBtn').addEventListener('click', ()=>{
+    if(basket.length === 0){
+        alert("Your basket is empty!");
+        return;
+    }
+    let message = "Hello, I am interested in the following items:%0A";
+    basket.forEach(item=>{
+        message += `${item.name} - Material: ${item.material}, Size: ${item.size}, Price: KES ${item.price}%0A`;
+    });
+    message += `Total: KES ${basket.reduce((sum,i)=>sum+i.price,0)}`;
+    
+    // Replace '254700000000' with your WhatsApp number
+    const waLink = `https://wa.me/254700000000?text=${message}`;
+    window.open(waLink, "_blank");
+});
+</script>
+
+</body>
+</html>
+
